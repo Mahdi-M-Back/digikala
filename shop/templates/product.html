@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load humanize %}
+
+<br><br>
+<div class="container">
+    <div class="card mb-3">
+    <div class="row g-0">
+        <div class="col-md-4">
+        <img src="{{product.picture.url}}" class="img-fluid rounded-start" alt="...">
+        </div>
+        <div class="col-md-8">
+        <div class="card-body">
+
+            <h4 class="card-title">{{product.name}}</h4>
+            <p class="card-text">{{product.description}}</p>
+
+            {% if product.is_sale %}
+
+            <del><p class="card-text">قیمت اصلی : {{product.price | intcomma }}</p></del><br>
+            <p class="card-text">قیمت در تخفیف : {{product.sale_price | intcomma }}</p>
+
+            {% else %}
+            <p class="card-text">قیمت : {{product.price | intcomma }}</p>
+            {% endif %}
+            تعداد :
+                <select class="form-select" id="cart-qty">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                </select>
+
+            <br><br>
+            <button class="btn btn-secondary" id="add-cart" value="{{ product.id }}">اضافه کردن به سبد خرید</button>
+
+            <br><br>
+            <a href="{% url 'home' %}" class='btn btn-secondary' ">بازگشت به صفحه اصلی</a>
+            <p class="card-text"><small class="text-body-secondary"></small></p>
+        </div> 
+        </div>
+    </div>
+    </div>
+</div>
+<br><br>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).on('click', '#add-cart', function(e) {
+    e.preventDefault();
+
+    $.ajax({ 
+        type: 'POST',
+        url: "{% url 'cart_add' %}",
+        data: {
+            product_id : $(this).val(),
+            product_qty : $('#cart-qty option:selected').text() ,
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+            action: 'post'
+        },
+        success: function(json) {
+            // آپدیت مقدار در navbar
+            $('#cart_quantity').text(json.qty);
+            document.getElementById('cart_quantity').textContent = json.qty
+            location.reload()
+        },
+        error: function(xhr, errmsg, err) {
+            console.log(xhr.status + ": " + xhr.responseText);
+        }
+    });
+});
+</script>
+
+
+{% endblock %}
+
