@@ -20,7 +20,7 @@
                         <li><a class="dropdown-item" href="#">تخفیف‌ها</a></li>
                     </ul>
                 </li>
-                <li class="nav-item"><a href="/admin/">ادمین</a></li>
+                <li class="nav-item"><a href="{% url 'admin:index' %}">ادمین</a></li>
 
                     {% if user.is_authenticated %}
                     <li class="nav-item dropdown">
